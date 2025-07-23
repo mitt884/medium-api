@@ -23,4 +23,26 @@ export class UsersRepository {
       where: { email },
     });
   }
+
+  async findById(userId: number): Promise<User | null> {
+    return this.prisma.User.findUnique({
+      where: { id: userId },
+    });
+}
+
+
+  async updateUser(userId: number,data: Prisma.UserUpdateInput,): Promise<Partial<User>> {
+    return this.prisma.User.update({
+      where: { id: userId },
+      data,
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        bio: true,
+        image: true,
+      },
+    });
+}
+
 }
