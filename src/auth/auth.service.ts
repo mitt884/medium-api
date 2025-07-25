@@ -4,7 +4,9 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { BCRYPT_SALT_ROUNDS } from '../common/constants/bycrypt.constant'
+import { BCRYPT_SALT_ROUNDS } from '../common/constants/bycrypt.constant';
+import { UserResponse } from './interfaces/auth-response.interace';
+import { User } from '@prisma/client'
 
 @Injectable()
 export class AuthService {
@@ -13,7 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto): Promise<UserResponse> {
     const { email, username, password } = registerDto;
     const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
 
@@ -26,7 +28,7 @@ export class AuthService {
     return this.buildUserResponse(user);
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<UserResponse> {
     const { email, password } = loginDto;
     const user = await this.usersService.findByEmail(email);
 
@@ -37,7 +39,7 @@ export class AuthService {
     return this.buildUserResponse(user);
   }
 
-  private buildUserResponse(user: any) {
+  private buildUserResponse(user: User): UserResponse {
     const token = this.jwtService.sign({ email: user.email, sub: user.id });
     return {
       user: {
