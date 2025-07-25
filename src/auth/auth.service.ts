@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { BCRYPT_SALT_ROUNDS } from '../common/constants/bycrypt.constant'
 
 @Injectable()
 export class AuthService {
@@ -14,7 +15,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const { email, username, password } = registerDto;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
 
     const user = await this.usersService.create({
       email,
